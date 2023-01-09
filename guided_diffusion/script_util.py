@@ -29,7 +29,7 @@ def classifier_defaults():
     Defaults for classifier models.
     """
     return dict(
-        image_size=64,
+        image_size=32, # 32 for TSRD
         classifier_use_fp16=False,
         classifier_width=128,
         classifier_depth=2,
@@ -45,7 +45,7 @@ def model_and_diffusion_defaults():
     Defaults for image training.
     """
     res = dict(
-        image_size=64,
+        image_size=32, # 32 for TSRD
         num_channels=128,
         num_res_blocks=2,
         num_heads=4,
@@ -152,7 +152,7 @@ def create_model(
             channel_mult = (1, 1, 2, 2, 4, 4)
         elif image_size == 128:
             channel_mult = (1, 1, 2, 3, 4)
-        elif image_size == 64:
+        elif image_size == 64 or image_size == 32:
             channel_mult = (1, 2, 3, 4)
         else:
             raise ValueError(f"unsupported image size: {image_size}")
@@ -241,7 +241,7 @@ def create_classifier(
         channel_mult = (1, 1, 2, 2, 4, 4)
     elif image_size == 128:
         channel_mult = (1, 1, 2, 3, 4)
-    elif image_size == 64:
+    elif image_size == 64 or image_size ==32:
         channel_mult = (1, 2, 3, 4)
     else:
         raise ValueError(f"unsupported image size: {image_size}")

@@ -4,6 +4,8 @@ Train a noised image classifier on ImageNet.
 
 import argparse
 import os
+import datetime
+from tqdm import tqdm
 
 import blobfile as bf
 import torch as th
@@ -29,7 +31,11 @@ def main():
     args = create_argparser().parse_args()
 
     dist_util.setup_dist()
-    logger.configure()
+    workdir = os.path.join(
+            args.workdirs,
+            datetime.datetime.now().strftime("openai-%Y-%m-%d-%H-%M-%S-%f"),
+        )
+    logger.configure(dir=workdir)
 
     logger.log("creating model and diffusion...")
     model, diffusion = create_classifier_and_diffusion(
@@ -135,7 +141,7 @@ def main():
                     mp_trainer.zero_grad()
                 mp_trainer.backward(loss * len(sub_batch) / len(batch))
 
-    for step in range(args.iterations - resume_step):
+    for step in tqdm(range(args.iterations - resume_step)):
         logger.logkv("step", step + resume_step)
         logger.logkv(
             "samples",
@@ -203,6 +209,7 @@ def create_argparser():
     defaults = dict(
         data_dir="",
         val_data_dir="",
+        workdirs='./workdirs',
         noised=True,
         iterations=150000,
         lr=3e-4,
