@@ -2,7 +2,9 @@
 Train a diffusion model on images.
 """
 
+import os
 import argparse
+import datetime
 
 from guided_diffusion import dist_util, logger
 from guided_diffusion.image_datasets import load_data
@@ -20,7 +22,11 @@ def main():
     args = create_argparser().parse_args()
 
     dist_util.setup_dist()
-    logger.configure()
+    workdir = os.path.join(
+        args.workdirs,
+        'Diffusion_model',
+        datetime.datetime.now().strftime("openai-%Y-%m-%d-%H-%M-%S-%f"))
+    logger.configure(dir=workdir)
 
     logger.log("creating model and diffusion...")
     model, diffusion = create_model_and_diffusion(
@@ -60,6 +66,7 @@ def main():
 def create_argparser():
     defaults = dict(
         data_dir="",
+        workdirs='./workdirs',
         schedule_sampler="uniform",
         lr=1e-4,
         weight_decay=0.0,

@@ -33,6 +33,7 @@ def main():
     dist_util.setup_dist()
     workdir = os.path.join(
             args.workdirs,
+            'Classifier_model',
             datetime.datetime.now().strftime("openai-%Y-%m-%d-%H-%M-%S-%f"),
         )
     logger.configure(dir=workdir)
