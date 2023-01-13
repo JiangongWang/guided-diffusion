@@ -5,6 +5,7 @@ process towards more realistic images.
 
 import argparse
 import os
+import datetime
 
 import numpy as np
 import torch as th
@@ -27,7 +28,11 @@ def main():
     args = create_argparser().parse_args()
 
     dist_util.setup_dist()
-    logger.configure()
+    workdir = os.path.join(
+        args.workdirs,
+        'Guided_Diffusion_model',
+        datetime.datetime.now().strftime("openai-%Y-%m-%d-%H-%M-%S-%f"))
+    logger.configure(dir=workdir)
 
     logger.log("creating model and diffusion...")
     model, diffusion = create_model_and_diffusion(
